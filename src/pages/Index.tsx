@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 const Index = () => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedTariff, setSelectedTariff] = useState<string | null>(null);
-  const [acceptedOffer, setAcceptedOffer] = useState(false);
+  const [acceptedOffers, setAcceptedOffers] = useState<Record<string, boolean>>({});
 
   const subjects = [
     { id: 'math', name: 'Математика', icon: 'Calculator', color: 'bg-orange-100' },
@@ -315,12 +315,15 @@ const Index = () => {
                                 <div className="space-y-4">
                                   <div className="flex items-start space-x-2">
                                     <Checkbox 
-                                      id="terms" 
-                                      checked={acceptedOffer}
-                                      onCheckedChange={(checked) => setAcceptedOffer(checked as boolean)}
+                                      id={`terms-${subject.id}-${tariff.id}`}
+                                      checked={acceptedOffers[`${subject.id}-${tariff.id}`] || false}
+                                      onCheckedChange={(checked) => setAcceptedOffers(prev => ({
+                                        ...prev,
+                                        [`${subject.id}-${tariff.id}`]: checked as boolean
+                                      }))}
                                     />
                                     <label
-                                      htmlFor="terms"
+                                      htmlFor={`terms-${subject.id}-${tariff.id}`}
                                       className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
                                       Принимаю условия{' '}
@@ -331,7 +334,7 @@ const Index = () => {
                                   </div>
                                   <Button 
                                     className="w-full bg-orange-500 hover:bg-orange-600 rounded-full text-lg py-6"
-                                    disabled={!acceptedOffer}
+                                    disabled={!acceptedOffers[`${subject.id}-${tariff.id}`]}
                                     onClick={() => setSelectedTariff(tariff.id)}
                                   >
                                     Выбрать тариф
